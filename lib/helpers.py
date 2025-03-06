@@ -32,7 +32,7 @@ def is_ip(string):
         if netaddr.valid_ipv6(string):
             return True
         return False
-    except:
+    except Exception as e:
         traceback.print_exc()
         return False
 
@@ -42,7 +42,8 @@ def is_cidr(string):
         if netaddr.IPNetwork(string) and "/" in string:
             return True
         return False
-    except:
+    except Exception as e:
+        traceback.print_exc()
         return False
 
 
@@ -52,7 +53,8 @@ def ip_in_net(ip, network):
         if netaddr.IPAddress(ip) in netaddr.IPNetwork(network):
             return True
         return False
-    except:
+    except Exception as e:
+        traceback.print_exc()
         return False
 
 
@@ -65,7 +67,7 @@ def generateHashes(filedata):
         sha1.update(filedata)
         sha256.update(filedata)
         return md5.hexdigest(), sha1.hexdigest(), sha256.hexdigest()
-    except Exception:
+    except Exception as e:
         traceback.print_exc()
         return 0, 0, 0
 
@@ -74,7 +76,8 @@ def getPlatformFull():
     type_info = ""
     try:
         type_info = "%s PROC: %s ARCH: %s" % ( " ".join(platform.win32_ver()), platform.processor(), " ".join(platform.architecture()))
-    except Exception:
+    except Exception as e:
+        traceback.print_exc()
         type_info = " ".join(platform.win32_ver())
     return type_info
 
@@ -86,7 +89,7 @@ def setNice(logger):
         logger.log("INFO", "Init", "Setting LOKI process with PID: %s to priority IDLE" % pid)
         p.nice(psutil.IDLE_PRIORITY_CLASS)
         return 1
-    except Exception:
+    except Exception as e:
         if logger.debug:
             traceback.print_exc()
         logger.log("ERROR", "Init", "Error setting nice value of THOR process")
@@ -102,7 +105,8 @@ def getExcludedMountpoints():
             if not options[0].startswith("/dev/"):
                 if not options[1] == "/":
                     excludes.append(options[1])
-    except Exception:
+    except Exception as e:
+        traceback.print_exc()
         print ("Error while reading /etc/mtab")
     finally:
         mtab.close()
@@ -173,7 +177,7 @@ def get_file_type(filePath, filetype_sigs, max_filetype_magics, logger):
             if res == bytes.fromhex(sig):
                 return filetype_sigs[sig]
         return "UNKNOWN"
-    except Exception:
+    except Exception as e:
         if logger.debug:
             traceback.print_exc()
         return "UNKNOWN"
@@ -186,10 +190,10 @@ def removeNonAscii(s, stripit=False):
             printable = set(string.printable)
             filtered_string = filter(lambda x: x in printable, s.decode('utf-8'))
             nonascii = ''.join(filtered_string)
-        except Exception:
+        except Exception as e:
             traceback.print_exc()
             nonascii = s.hex()
-    except Exception:
+    except Exception as e:
         traceback.print_exc()
         pass
 
@@ -202,7 +206,7 @@ def removeNonAsciiDrop(s):
         # Generate a new string without disturbing characters
         printable = set(string.printable)
         nonascii = filter(lambda x: x in printable, s)
-    except Exception:
+    except Exception as e:
         traceback.print_exc()
         pass
     return nonascii
@@ -219,7 +223,7 @@ def getAge(filePath):
         # Accessed
         atime=stats.st_atime
 
-    except Exception:
+    except Exception as e:
         # traceback.print_exc()
         return (0, 0, 0)
 
@@ -231,7 +235,8 @@ def getAgeString(filePath):
     timestring = ""
     try:
         timestring = "CREATED: %s MODIFIED: %s ACCESSED: %s" % ( time.ctime(ctime), time.ctime(mtime), time.ctime(atime) )
-    except Exception:
+    except Exception as e:
+        traceback.print_exc()
         timestring = "CREATED: not_available MODIFIED: not_available ACCESSED: not_available"
     return timestring
 
@@ -268,7 +273,7 @@ def runProcess(command, timeout=10):
         watchdog.cancel() # if it's still waiting to run
         success = not kill_check.isSet()
         kill_check.clear()
-    except Exception:
+    except Exception as e:
         traceback.print_exc()
 
     return output, returnCode

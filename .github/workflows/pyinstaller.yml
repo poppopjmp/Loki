@@ -28,3 +28,9 @@ jobs:
       with:
         name: loki-binaries
         path: dist/windows
+    - name: generate plugin template
+      run: |
+        mkdir -p plugins
+        echo "# Plugin Template" > plugins/plugin_template.py
+        echo "def plugin_function():" >> plugins/plugin_template.py
+        echo "    pass" >> plugins/plugin_template.py

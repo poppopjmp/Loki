@@ -55,7 +55,11 @@ class PESieve(object):
         # Compose command
         command = [self.peSieve, '/pid', str(pid), '/ofilter', '2', '/quiet', '/json'] + (['/shellc'] if pesieveshellc else [])
         # Run PE-Sieve on given process
-        (output, returnCode) = runProcess(command)
+        try:
+            (output, returnCode) = runProcess(command)
+        except Exception as e:
+            self.logger.log("ERROR", "PESieve", "Error running PE-Sieve: {0}".format(str(e)))
+            return results
         # Debug output
         if self.logger.debug:
             print("PE-Sieve JSON output: %s" % output)
@@ -68,7 +72,7 @@ class PESieve(object):
         except ValueError:
             traceback.print_exc()
             self.logger.log("DEBUG", "PESieve", "Couldn't parse the JSON output.")
-        except Exception:
+        except Exception as e:
             traceback.print_exc()
-            self.logger.log("ERROR", "PESieve", "Something went wrong during PE-Sieve scan.")
+            self.logger.log("ERROR", "PESieve", "Something went wrong during PE-Sieve scan: {0}".format(str(e)))
         return results
