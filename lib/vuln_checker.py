@@ -47,3 +47,23 @@ class VulnChecker():
         except UnicodeDecodeError:
             self.logger.log("ERROR", "VulnChecker", "Unicode decode error in SAM check")
         return False
+
+    def check_vulnerabilities(self):
+        """
+        Check for various vulnerabilities
+        :return:
+        """
+        try:
+            self.check_sam_readable()
+        except Exception as e:
+            self.logger.log("ERROR", "VulnChecker", f"Error checking vulnerabilities: {str(e)}")
+            return False
+        return True
+
+# Plugin template for adding new plugins based on different projects
+def plugin_template():
+    """
+    Template for adding new plugins
+    :return:
+    """
+    pass
